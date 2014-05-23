@@ -39,7 +39,7 @@ echo Wrap(Wrap(T($this->Data['Title']), 'h1'), 'div', array('class' => 'Header')
 	}
 	$UserNames = '<br />'.rtrim($UserNames, ', ');
 	
-	if($this->BulkEditActionComplete) {
+	if(property_exists($this, 'BulkEditActionComplete')) {
 		echo Wrap(T($Completed).'<br />'.$UserNames,
 			'div',
 			array('class' => 'BulkEditUserList Info'));

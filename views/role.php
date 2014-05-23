@@ -45,7 +45,7 @@ echo Wrap(Wrap(T($this->Data['Title']), 'h1'), 'div', array('class' => 'Header')
 	$UserNames = rtrim($UserNames, ', ');
 	
 	$RoleNames = implode(', ', $this->BulkEditRoles);
-	if($this->BulkEditActionComplete) {
+	if(property_exists($this, 'BulkEditActionComplete')) {
 		echo Wrap(T($Completed).'<br />'.$RoleNames.'<br />'.T('for these users:').'<br />'.$UserNames,
 			'div',
 			array('class' => 'BulkEditUserList Info'));

@@ -26,7 +26,7 @@ echo Wrap(Wrap(T($this->Data['Title']), 'h1'), 'div', array('class' => 'Header')
 	$UserNames = '<br />'.rtrim($UserNames, ', ');
 	
 	// Helpful description
-	if($this->BulkEditActionComplete) {
+	if(property_exists($this, 'BulkEditActionComplete')) {
 		echo Wrap(T('You removed these users:').'<br />'.$UserNames,
 			'div',
 			array('class' => 'BulkEditUserList Info'));
