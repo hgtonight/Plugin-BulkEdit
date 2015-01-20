@@ -16,8 +16,8 @@
 $PluginInfo['BulkEdit'] = array(
     'Name' => 'Bulk Edit',
     'Description' => 'Remove users, add/remove roles, set multiple roles, ban/unban, and verify multiple users all from the Users dashboard.',
-    'Version' => '1.2',
-    'RequiredApplications' => array('Vanilla' => '2.0.18.8'),
+    'Version' => '1.3',
+    'RequiredApplications' => array('Vanilla' => '2.1.8p2'),
     'RequiredTheme' => FALSE,
     'RequiredPlugins' => FALSE,
     'MobileFriendly' => TRUE,
@@ -54,8 +54,9 @@ class BulkEdit extends Gdn_Plugin {
 
   public function UserController_UserCell_Handler($Sender) {
     $Sender->Form->InputPrefix = 'Form';
-    if(property_exists($Sender, 'EventArgs')) {
-      $User = $Sender->EventArgs['User'];
+    
+    if(count($Sender->EventArguments) > 0) {
+      $User = $Sender->EventArguments['User'];
       echo '<td>' . $Sender->Form->Checkbox('Plugins.BulkEdit.UserIDs[]', NULL, array('value' => $User->UserID, 'class' => 'BulkSelect')) . '</td>';
     }
     else {
@@ -66,13 +67,7 @@ class BulkEdit extends Gdn_Plugin {
   public function UserController_Render_Before($Sender) {
     $Sender->AddJsFile($this->GetResource('js/bulkedit.js', FALSE, FALSE));
     $Sender->AddCssFile($this->GetResource('design/bulkedit.css', FALSE, FALSE));
-
-    if(version_compare(APPLICATION_VERSION, '2.0', '>')) {
-      $Tools = '<select name="BulkEditDropDownAction" id="BulkEditDropDown"><option value="0">With Checked Users...</option><option value="remove">Remove Users...</option><option value="role/add">Add Role to Users...</option><option value="role/remove">Remove Role from Users...</option><option value="role/set">Set roles for Users...</option><option value="ban">Ban Users...</option><option value="ban/unban">Unban Users...</option><option value="verify">Verify Users...</option><option value="verify/unverify">Unverify Users...</option></select>';
-    }
-    else {
-      $Tools = '<select name="BulkEditDropDownAction" id="BulkEditDropDown"><option value="0">With Checked Users...</option><option value="remove">Remove Users...</option><option value="role/add">Add Role to Users...</option><option value="role/remove">Remove Role from Users...</option><option value="role/set">Set roles for Users...</option><option value="ban">Ban Users...</option><option value="ban/unban">Unban Users...</option></select>';
-    }
+    $Tools = '<select name="BulkEditDropDownAction" id="BulkEditDropDown"><option value="0">With Checked Users...</option><option value="remove">Remove Users...</option><option value="role/add">Add Role to Users...</option><option value="role/remove">Remove Role from Users...</option><option value="role/set">Set roles for Users...</option><option value="ban">Ban Users...</option><option value="ban/unban">Unban Users...</option><option value="verify">Verify Users...</option><option value="verify/unverify">Unverify Users...</option></select>';
     $Sender->AddDefinition('BulkEditTools', $Tools);
   }
 
@@ -98,7 +93,7 @@ class BulkEdit extends Gdn_Plugin {
       // First time viewing
       $Sender->Form->SetData($ConfigurationModel->Data);
 
-      $this->_AddInjectedUserIDsProperly($Sender);
+      $this->AddInjectedUserIDsProperly($Sender);
     }
     else {
       // Form submission handling
@@ -162,7 +157,7 @@ class BulkEdit extends Gdn_Plugin {
       // First time viewing
       $Sender->Form->SetData($ConfigurationModel->Data);
 
-      $this->_AddInjectedUserIDsProperly($Sender);
+      $this->AddInjectedUserIDsProperly($Sender);
     }
     else {
       // Form submission handling
@@ -227,7 +222,7 @@ class BulkEdit extends Gdn_Plugin {
       // First time viewing
       $Sender->Form->SetData($ConfigurationModel->Data);
 
-      $this->_AddInjectedUserIDsProperly($Sender);
+      $this->AddInjectedUserIDsProperly($Sender);
     }
     else {
       // Form submission handling
@@ -305,7 +300,7 @@ class BulkEdit extends Gdn_Plugin {
       // First time viewing
       $Sender->Form->SetData($ConfigurationModel->Data);
 
-      $this->_AddInjectedUserIDsProperly($Sender);
+      $this->AddInjectedUserIDsProperly($Sender);
     }
     else {
       // Form submission handling
@@ -358,12 +353,11 @@ class BulkEdit extends Gdn_Plugin {
     $Sender->Render($this->GetView('role.php'));
   }
 
-  private function _AddInjectedUserIDsProperly($Sender) {
+  private function AddInjectedUserIDsProperly($Sender) {
     // gnab the data from the hacked post request
     $Request = $Sender->Request->GetRequestArguments();
 
     if(empty($Request['post']['Form/Plugins-dot-BulkEdit-dot-UserIDs'])) {
-      //echo '<pre>'; var_dump($Request); echo '</pre>';
       Redirect('/dashboard/user');
     }
     $UserIDs = $Request['post']['Form/Plugins-dot-BulkEdit-dot-UserIDs'];
@@ -375,13 +369,4 @@ class BulkEdit extends Gdn_Plugin {
     // Add the UserIDs to the current form in a hidden field so we can operate on them
     $Sender->Form->AddHidden('Plugins.BulkEdit.UserIDs', json_encode($UserIDs), TRUE);
   }
-
-  public function Setup() {
-    // SaveToConfig('Plugins.BulkEdit.EnableAdvancedMode', TRUE);
-  }
-
-  public function OnDisable() {
-    // RemoveFromConfig('Plugins.BulkEdit.EnableAdvancedMode');
-  }
-
 }
