@@ -15,8 +15,7 @@
 */
 
 echo Heading($this->Data('Title'));
-echo '<header class="subheading-block">';
-echo Wrap(T($this->PluginDescription), 'div', array('class' => 'Info'));
+echo Wrap(T($this->PluginDescription), 'div', array('class' => 'padded'));
 ?>
 <div class="Aside Box">
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
@@ -27,6 +26,5 @@ echo Wrap(T($this->PluginDescription), 'div', array('class' => 'Info'));
 </form>
 </div>
 <?php
-echo Wrap('Find this plugin helpful? Want to support a freelance developer?<br/>Click the donate button to buy me a beer. :D', 'div', array('class' => 'Info')); 
-echo Wrap('Confused by something? Check out the feedback thread on the official <a href="http://vanillaforums.org/discussion/24485/official-feedback-thread" target="_blank">Vanilla forums</a>.', 'div', array('class' => 'Info'));
-echo '</header>';
+echo Wrap('Find this plugin helpful? Want to support a freelance developer?<br/>Click the donate button to buy me a beer. :D', 'div', array('class' => 'padded')); 
+echo Wrap('Confused by something? Check out the feedback thread on the official <a href="http://vanillaforums.org/discussion/24485/official-feedback-thread" target="_blank">Vanilla forums</a>.', 'div', array('class' => 'padded'));
