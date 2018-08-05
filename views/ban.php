@@ -14,55 +14,50 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-echo Wrap(Wrap(T($this->Data['Title']), 'h1'), 'div', array('class' => 'Header'));
+echo Heading($this->Data('Title'));
 
-?>
-<div class="Content"><?php
-	switch($this->BulkEditAction) {
-	default:
-	case 'ban':
-		$Completed = 'You banned these users:';
-		$WorkingOn = 'You are <strong>banning</strong> the following users:';
-		$ButtonAction = 'Ban Users';
-		break;
-	case 'unban':
-		$Completed = 'You unbanned these users:';
-		$WorkingOn = 'You are <strong>unbanning</strong> the following users:';
-		$ButtonAction = 'Unban Users';
-		break;
-	}
-	
-	// Construct a username list
-	$UserNames = '';
-	foreach($this->BulkEditUsers as $User) {
-		$UserNames .= $User['Name'].', ';
-	}
-	$UserNames = '<br />'.rtrim($UserNames, ', ');
-	
-	if(property_exists($this, 'BulkEditActionComplete')) {
-		echo Wrap(T($Completed).'<br />'.$UserNames,
-			'div',
-			array('class' => 'BulkEditUserList Info'));
-			
-		echo Wrap(Anchor(T('Return to User List'), '/dashboard/user'), 'div', array('class' => 'Info'));
-	}
-	else {
-		echo $this->Form->Open();
-		echo $this->Form->Errors();
-		
-		echo Wrap(
-			T($WorkingOn).'<br />'.$UserNames,
-			'div',
-			array('class' => 'BulkEditUserList Info Confirm'));
-		
-		echo $this->Form->Button(T('Cancel'), array(
-			'Type' => 'button',
-			'onclick' => 'history.go(-1)'
-			));
-		echo $this->Form->Button(T($ButtonAction));
-		
-		echo $this->Form->Close();
-	}
-?>
-</div>
+switch($this->BulkEditAction) {
+default:
+case 'ban':
+    $Completed = 'You banned these users:';
+    $WorkingOn = 'You are <strong>banning</strong> the following users:';
+    $ButtonAction = 'Ban Users';
+    break;
+case 'unban':
+    $Completed = 'You unbanned these users:';
+    $WorkingOn = 'You are <strong>unbanning</strong> the following users:';
+    $ButtonAction = 'Unban Users';
+    break;
+}
 
+// Construct a username list
+$UserNames = '';
+foreach($this->BulkEditUsers as $User) {
+    $UserNames .= $User['Name'].', ';
+}
+$UserNames = '<br />'.rtrim($UserNames, ', ');
+
+if(property_exists($this, 'BulkEditActionComplete')) {
+    echo Wrap(T($Completed).'<br />'.$UserNames,
+        'div',
+        array('class' => 'BulkEditUserList padded'));
+
+    echo Wrap(Anchor(T('Return to User List'), '/dashboard/user'), 'div', array('class' => 'padded'));
+}
+else {
+    echo $this->Form->Open();
+    echo $this->Form->Errors();
+
+    echo Wrap(
+        T($WorkingOn).'<br />'.$UserNames,
+        'div',
+        array('class' => 'BulkEditUserList padded Confirm'));
+
+    echo $this->Form->Button(T('Cancel'), array(
+        'Type' => 'button',
+        'onclick' => 'history.go(-1)'
+        ));
+    echo $this->Form->Button(T($ButtonAction));
+
+    echo $this->Form->Close();
+}
