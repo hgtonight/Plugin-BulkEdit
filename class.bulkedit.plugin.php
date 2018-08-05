@@ -35,7 +35,8 @@ class BulkEditPlugin extends Gdn_Plugin {
 
   public function PluginController_BulkEdit_Create($Sender) {
     // Makes it look like a dashboard page
-    $Sender->SetHighlightRoute('plugin/bulkedit');
+    $Sender->SetHighlightRoute('dashboard/user');
+    Gdn_Theme::section('Moderation');
 
     // Makes it act like a mini controller
     $this->Dispatch($Sender, $Sender->RequestArgs);
@@ -46,7 +47,6 @@ class BulkEditPlugin extends Gdn_Plugin {
   }
 
   public function Controller_Settings($Sender) {
-    $Sender->AddCssFile('bulkedit.css', 'plugins/BulkEdit');
     $Sender->PluginDescription = 'Remove users, add/remove roles, set multiple roles, ban/unban, and verify multiple users all from the Users dashboard.';
     $Sender->Title('Bulk Edit Settings');
     $Sender->Render('settings', '', 'plugins/BulkEdit');
@@ -58,13 +58,12 @@ class BulkEditPlugin extends Gdn_Plugin {
       echo '<td>' . $Sender->Form->Checkbox('Plugins.BulkEdit.UserIDs[]', NULL, array('value' => $User->UserID, 'class' => 'BulkSelect')) . '</td>';
     }
     else {
-      echo '<th id="BulkEditAction" title="Toggle">' . T('Action') . '</th>';
+      echo '<th id="BulkEditAction" title="Toggle" style="cursor:pointer;" class="column-sm">' . Anchor(T('Action'), 'javascript:') . '</th>';
     }
   }
 
   public function UserController_Render_Before($Sender) {
     $Sender->AddJsFile('bulkedit.js', 'plugins/BulkEdit');
-    $Sender->AddCssFile('bulkedit.css', 'plugins/BulkEdit');
     $Tools = '<select name="BulkEditDropDownAction" id="BulkEditDropDown"><option value="0">With Checked Users...</option><option value="remove">Remove Users...</option><option value="role/add">Add Role to Users...</option><option value="role/remove">Remove Role from Users...</option><option value="role/set">Set roles for Users...</option><option value="ban">Ban Users...</option><option value="ban/unban">Unban Users...</option><option value="verify">Verify Users...</option><option value="verify/unverify">Unverify Users...</option></select>';
     $Sender->AddDefinition('BulkEditTools', $Tools);
   }
@@ -129,7 +128,7 @@ class BulkEditPlugin extends Gdn_Plugin {
     );
 
     // Figure out if we are banning or unbanning
-    $Method = strtolower($Sender->RequestArgs[1]);
+    $Method = strtolower($Sender->RequestArgs[1] ?? 'ban');
 
     if($Method == 'unban') {
       $Sender->Title('Bulk Unban Users');
@@ -194,7 +193,7 @@ class BulkEditPlugin extends Gdn_Plugin {
     );
 
     // Figure out if we are verifying or unverifying
-    $Method = strtolower($Sender->RequestArgs[1]);
+    $Method = strtolower($Sender->RequestArgs[1] ?? 'verify');
 
     if($Method == 'unverify') {
       $Sender->Title('Bulk Unverify Users');
@@ -258,7 +257,7 @@ class BulkEditPlugin extends Gdn_Plugin {
     );
 
     // Figure out if we are setting, removing, or adding roles
-    $Method = strtolower($Sender->RequestArgs[1]);
+    $Method = strtolower($Sender->RequestArgs[1] ?? 'set');
 
     switch($Method) {
       default:
@@ -306,6 +305,7 @@ class BulkEditPlugin extends Gdn_Plugin {
       $ConfigurationModel->Validation->ApplyRule('Plugins.BulkEdit.UserIDs', 'Required');
 
       $Data = $Sender->Form->FormValues();
+      $Sender->Form->setFormValue('Plugins.BulkEdit.RoleIDs', json_encode($Data['Plugins.BulkEdit.RoleIDs']));
       $UserIDs = json_decode($Data['Plugins.BulkEdit.UserIDs']);
 
       // Need to have these in case the there is a validation error
@@ -313,15 +313,15 @@ class BulkEditPlugin extends Gdn_Plugin {
       $Sender->BulkEditUsers = $UserModel->GetIDs($UserIDs);
       $Sender->Form->AddHidden('Plugins.BulkEdit.UserIDs', $Data['Plugins.BulkEdit.UserIDs'], TRUE);
 
+      // Store so we can display them
+      $Sender->BulkEditUsers = $UserModel->GetIDs($UserIDs);
+      $Sender->BulkEditRoles = array_intersect_key($Sender->RoleData, array_flip($Data['Plugins.BulkEdit.RoleIDs']));
+      
       if($Sender->Form->Save() !== FALSE) {
-        // Store so we can display them
-        $Sender->BulkEditUsers = $UserModel->GetIDs($UserIDs);
-        $Sender->BulkEditRoles = array_intersect_key($Sender->RoleData, array_flip($Data['Plugins.BulkEdit.RoleIDs']));
-
         foreach($UserIDs as $UserID) {
           // Get the old roles
           $CurrentRoleData = $UserModel->GetRoles($UserID);
-          $CurrentRoleIDs = ConsolidateArrayValuesByKey($CurrentRoleData->Result(), 'RoleID');
+          $CurrentRoleIDs = array_column($CurrentRoleData->Result(), 'RoleID');
 
           switch($Method) {
             default:
@@ -340,7 +340,7 @@ class BulkEditPlugin extends Gdn_Plugin {
           }
           // Set the combined roles
           if($NewRoleIDs != $CurrentRoleIDs) {
-            $UserModel->SaveRoles($UserID, $NewRoleIDs);
+            $UserModel->SaveRoles($UserID, $NewRoleIDs, false);
           }
         }
         $Sender->StatusMessage = T('Roles have been saved!');
