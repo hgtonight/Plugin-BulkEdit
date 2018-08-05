@@ -42,7 +42,7 @@ foreach($this->BulkEditUsers as $User) {
 }
 $UserNames = rtrim($UserNames, ', ');
 
-$RoleNames = implode(', ', $this->BulkEditRoles);
+$RoleNames = implode(', ', $this->BulkEditRoles ?? []);
 if(property_exists($this, 'BulkEditActionComplete')) {
     echo Wrap(T($Completed).'<br />'.$RoleNames.'<br />'.T('for these users:').'<br />'.$UserNames,
         'div',
