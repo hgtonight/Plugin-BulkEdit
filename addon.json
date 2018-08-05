@@ -1,0 +1,19 @@
+{
+    "name": "Bulk Edit",
+    "description": "Remove users, add/remove roles, set multiple roles, ban/unban, and verify multiple users all from the Users dashboard.",
+    "version": "1.3.1",
+    "mobileFriendly": true,
+    "settingsUrl": "/plugin/bulkedit/settings",
+    "settingsPermission": "Garden.Settings.Manage",
+    "hasLocale": true,
+    "key": "bulkedit",
+    "type": "addon",
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "Zachary Doll",
+            "email": "hgtonight@daklutz.com",
+            "homepage": "http://www.daklutz.com"
+        }
+    ]
+}
