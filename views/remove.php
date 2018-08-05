@@ -28,7 +28,7 @@ if(property_exists($this, 'BulkEditActionComplete')) {
     echo Wrap(T('You removed these users:').'<br />'.$UserNames,
         'div',
         array('class' => 'BulkEditUserList padded'));
-        
+
     echo Wrap(Anchor(T('Return to User List'), '/dashboard/user'), 'div', array('class' => 'padded'));
 }
 else {
@@ -40,33 +40,33 @@ else {
             Wrap(T('UserDelete', 'Remove User Content').': '.T('UserDeleteMessage', 'Delete the user and completely remove all of the user\'s content. This may cause discussions to be disjointed. Best option for removing spam.'), 'li'),
             'ul')
     );
-    
+
     echo $this->Form->Open();
     echo $this->Form->Errors();
-    
+
     echo Wrap(
     T('You are going to <strong>remove</strong> the following users: ').
         $UserNames,
     'div',
     array('class' => 'BulkEditUserList padded Confirm'));
-    
+
         echo Wrap(
     $this->Form->Label(T('What do you want to do with their content?'), 'Plugins.BulkEdit.RemoveType').
     $this->Form->RadioList('Plugins.BulkEdit.RemoveType', array(
         'keep' => T('UserKeep', 'Keep User Content'),
         'wipe' => T('UserWipe', 'Blank User Content'),
         'delete' => T('UserDelete', 'Remove User Content')
-        ), array('list' => TRUE)).'<br>'.
+        ), array('list' => TRUE)).'<br />'.
     $this->Form->CheckBox('Plugins.BulkEdit.Confirm', T('Are you sure you want to remove these users?')),
     'div',
     array('class' => 'BulkEditUserList padded'));
-    
+
     echo $this->Form->Button(T('Cancel'), array(
         'Type' => 'button',
         'onclick' => 'history.go(-1)'
         ));
     echo $this->Form->Button(T('Delete Users Forever'));
-    
+
     echo $this->Form->Close();
 }
 
