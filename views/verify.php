@@ -14,62 +14,55 @@
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-echo Wrap(Wrap(T($this->Data['Title']), 'h1'), 'div', array('class' => 'Header'));
+echo Heading($this->Data('Title'));
 
-?>
-<div class="Content"><?php
-	switch($this->BulkEditAction) {
-	default:
-	case 'verify':
-		$Completed = 'You verified these users:';
-		$WorkingOn = 'You are <strong>verifying</strong> the following users:';
-		$ButtonAction = 'Verify Users';
-		break;
-	case 'unverify':
-		$Completed = 'You unverified these users:';
-		$WorkingOn = 'You are <strong>unverifying</strong> the following users:';
-		$ButtonAction = 'Unverify Users';
-		break;
-	}
-	
-	// Construct a username list
-	$UserNames = '';
-	foreach($this->BulkEditUsers as $User) {
-		$UserNames .= $User['Name'].', ';
-	}
-	$UserNames = '<br />'.rtrim($UserNames, ', ');
-	
-	if(property_exists($this, 'BulkEditActionComplete')) {
-		echo Wrap(T($Completed).'<br />'.$UserNames,
-			'div',
-			array('class' => 'BulkEditUserList Info'));
-			
-		echo Wrap(Anchor(T('Return to User List'), '/dashboard/user'), 'div', array('class' => 'Info'));
-	}
-	else {
-      echo Wrap(
-			Wrap(T('Help'), 'h2').
-			Wrap('Verifying users skips spam checking on their posts. This will save server resources as well as reduce the time between clicking post and it displaying.', 'div'),
-			'div',
-			array('class' => 'Help Aside')
-		);
-      
-		echo $this->Form->Open();
-		echo $this->Form->Errors();
-		
-		echo Wrap(
-			T($WorkingOn).'<br />'.$UserNames,
-			'div',
-			array('class' => 'BulkEditUserList Info Confirm'));
-		
-		echo $this->Form->Button(T('Cancel'), array(
-			'Type' => 'button',
-			'onclick' => 'history.go(-1)'
-			));
-		echo $this->Form->Button(T($ButtonAction));
-		
-		echo $this->Form->Close();
-	}
-?>
-</div>
+switch($this->BulkEditAction) {
+default:
+case 'verify':
+    $Completed = 'You verified these users:';
+    $WorkingOn = 'You are <strong>verifying</strong> the following users:';
+    $ButtonAction = 'Verify Users';
+    break;
+case 'unverify':
+    $Completed = 'You unverified these users:';
+    $WorkingOn = 'You are <strong>unverifying</strong> the following users:';
+    $ButtonAction = 'Unverify Users';
+    break;
+}
 
+// Construct a username list
+$UserNames = '';
+foreach($this->BulkEditUsers as $User) {
+    $UserNames .= $User['Name'].', ';
+}
+$UserNames = '<br />'.rtrim($UserNames, ', ');
+
+if(property_exists($this, 'BulkEditActionComplete')) {
+    echo Wrap(T($Completed).'<br />'.$UserNames,
+        'div',
+        array('class' => 'BulkEditUserList padded'));
+
+    echo Wrap(Anchor(T('Return to User List'), '/dashboard/user'), 'div', array('class' => 'padded'));
+}
+else {
+  echo HelpAsset(
+        T('Help'),
+        Wrap('Verifying users skips spam checking on their posts. This will save server resources as well as reduce the time between clicking post and it displaying.', 'div')
+    );
+
+    echo $this->Form->Open();
+    echo $this->Form->Errors();
+
+    echo Wrap(
+        T($WorkingOn).'<br />'.$UserNames,
+        'div',
+        array('class' => 'BulkEditUserList padded Confirm'));
+
+    echo $this->Form->Button(T('Cancel'), array(
+        'Type' => 'button',
+        'onclick' => 'history.go(-1)'
+        ));
+    echo $this->Form->Button(T($ButtonAction));
+
+    echo $this->Form->Close();
+}
