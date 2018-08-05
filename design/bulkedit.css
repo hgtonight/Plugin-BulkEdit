@@ -9,10 +9,6 @@
 	text-decoration: none;
 	color: rgb(51, 51, 51) !important;
 }
-#BulkEditDropDown {
-	position: absolute;
-	right: 10px;
-}
 
 .FilterMenu {
 	overflow: hidden;
