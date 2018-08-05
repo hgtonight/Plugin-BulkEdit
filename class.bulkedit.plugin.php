@@ -31,11 +31,11 @@ $PluginInfo['BulkEdit'] = array(
     'License' => 'GPLv3'
 );
 
-class BulkEdit extends Gdn_Plugin {
+class BulkEditPlugin extends Gdn_Plugin {
 
   public function PluginController_BulkEdit_Create($Sender) {
     // Makes it look like a dashboard page
-    $Sender->AddSideMenu('plugin/bulkedit');
+    $Sender->SetHighlightRoute('plugin/bulkedit');
 
     // Makes it act like a mini controller
     $this->Dispatch($Sender, $Sender->RequestArgs);
@@ -46,16 +46,14 @@ class BulkEdit extends Gdn_Plugin {
   }
 
   public function Controller_Settings($Sender) {
-    $Sender->AddCssFile($this->GetResource('design/bulkedit.css', FALSE, FALSE));
+    $Sender->AddCssFile('bulkedit.css', 'plugins/BulkEdit');
     $Sender->PluginDescription = 'Remove users, add/remove roles, set multiple roles, ban/unban, and verify multiple users all from the Users dashboard.';
     $Sender->Title('Bulk Edit Settings');
     $Sender->Render($this->GetView('settings.php'));
   }
 
   public function UserController_UserCell_Handler($Sender) {
-    $Sender->Form->InputPrefix = 'Form';
-    
-    if(count($Sender->EventArguments) > 0) {
+    if(isset($Sender->EventArguments['User'])) {
       $User = $Sender->EventArguments['User'];
       echo '<td>' . $Sender->Form->Checkbox('Plugins.BulkEdit.UserIDs[]', NULL, array('value' => $User->UserID, 'class' => 'BulkSelect')) . '</td>';
     }
@@ -65,8 +63,8 @@ class BulkEdit extends Gdn_Plugin {
   }
 
   public function UserController_Render_Before($Sender) {
-    $Sender->AddJsFile($this->GetResource('js/bulkedit.js', FALSE, FALSE));
-    $Sender->AddCssFile($this->GetResource('design/bulkedit.css', FALSE, FALSE));
+    $Sender->AddJsFile('bulkedit.js', 'plugins/BulkEdit');
+    $Sender->AddCssFile('bulkedit.css', 'plugins/BulkEdit');
     $Tools = '<select name="BulkEditDropDownAction" id="BulkEditDropDown"><option value="0">With Checked Users...</option><option value="remove">Remove Users...</option><option value="role/add">Add Role to Users...</option><option value="role/remove">Remove Role from Users...</option><option value="role/set">Set roles for Users...</option><option value="ban">Ban Users...</option><option value="ban/unban">Unban Users...</option><option value="verify">Verify Users...</option><option value="verify/unverify">Unverify Users...</option></select>';
     $Sender->AddDefinition('BulkEditTools', $Tools);
   }
