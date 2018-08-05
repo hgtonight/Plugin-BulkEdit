@@ -13,23 +13,6 @@
  * 	You should have received a copy of the GNU General Public License
  * 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-$PluginInfo['BulkEdit'] = array(
-    'Name' => 'Bulk Edit',
-    'Description' => 'Remove users, add/remove roles, set multiple roles, ban/unban, and verify multiple users all from the Users dashboard.',
-    'Version' => '1.3',
-    'RequiredApplications' => array('Vanilla' => '2.1.8p2'),
-    'RequiredTheme' => FALSE,
-    'RequiredPlugins' => FALSE,
-    'MobileFriendly' => TRUE,
-    'HasLocale' => TRUE,
-    'RegisterPermissions' => FALSE,
-    'SettingsUrl' => '/plugin/bulkedit/settings',
-    'SettingsPermission' => 'Garden.Settings.Manage',
-    'Author' => "Zachary Doll",
-    'AuthorEmail' => 'hgtonight@daklutz.com',
-    'AuthorUrl' => 'http://www.daklutz.com',
-    'License' => 'GPLv3'
-);
 
 class BulkEditPlugin extends Gdn_Plugin {
 
@@ -356,7 +339,7 @@ class BulkEditPlugin extends Gdn_Plugin {
     $Request = $Sender->Request->GetRequestArguments();
 
     if(empty($Request['post']['Plugins-dot-BulkEdit-dot-UserIDs'])) {
-      Redirect('/dashboard/user');
+      RedirectTo('/dashboard/user');
     }
     $UserIDs = $Request['post']['Plugins-dot-BulkEdit-dot-UserIDs'];
 
