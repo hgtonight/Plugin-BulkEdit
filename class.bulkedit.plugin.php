@@ -49,7 +49,7 @@ class BulkEditPlugin extends Gdn_Plugin {
     $Sender->AddCssFile('bulkedit.css', 'plugins/BulkEdit');
     $Sender->PluginDescription = 'Remove users, add/remove roles, set multiple roles, ban/unban, and verify multiple users all from the Users dashboard.';
     $Sender->Title('Bulk Edit Settings');
-    $Sender->Render($this->GetView('settings.php'));
+    $Sender->Render('settings', '', 'plugins/BulkEdit');
   }
 
   public function UserController_UserCell_Handler($Sender) {
@@ -118,7 +118,7 @@ class BulkEditPlugin extends Gdn_Plugin {
       }
     }
 
-    $Sender->Render($this->GetView('remove.php'));
+    $Sender->Render('remove', '', 'plugins/BulkEdit');
   }
 
   public function Controller_Ban($Sender) {
@@ -183,7 +183,7 @@ class BulkEditPlugin extends Gdn_Plugin {
       }
     }
 
-    $Sender->Render($this->GetView('ban.php'));
+    $Sender->Render('ban', '', 'plugins/BulkEdit');
   }
 
   public function Controller_Verify($Sender) {
@@ -247,7 +247,7 @@ class BulkEditPlugin extends Gdn_Plugin {
       }
     }
 
-    $Sender->Render($this->GetView('verify.php'));
+    $Sender->Render('verify', '', 'plugins/BulkEdit');
   }
 
   public function Controller_Role($Sender) {
@@ -348,17 +348,17 @@ class BulkEditPlugin extends Gdn_Plugin {
       }
     }
 
-    $Sender->Render($this->GetView('role.php'));
+    $Sender->Render('role', '', 'plugins/BulkEdit');
   }
 
   private function AddInjectedUserIDsProperly($Sender) {
     // gnab the data from the hacked post request
     $Request = $Sender->Request->GetRequestArguments();
 
-    if(empty($Request['post']['Form/Plugins-dot-BulkEdit-dot-UserIDs'])) {
+    if(empty($Request['post']['Plugins-dot-BulkEdit-dot-UserIDs'])) {
       Redirect('/dashboard/user');
     }
-    $UserIDs = $Request['post']['Form/Plugins-dot-BulkEdit-dot-UserIDs'];
+    $UserIDs = $Request['post']['Plugins-dot-BulkEdit-dot-UserIDs'];
 
     // Get the full user object from the usermodel and store it for the view
     $UserModel = new UserModel();
